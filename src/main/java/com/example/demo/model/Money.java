@@ -14,7 +14,11 @@ public class Money {
     public final static Money ZERO = new Money(0);
 
     public Money(BigDecimal amount) {
-        this.amount = amount.setScale(8, RoundingMode.HALF_UP);
+        this.amount = amount.setScale(10, RoundingMode.HALF_UP);
+    }
+
+    public Money(String amount){
+        this(new BigDecimal(amount));
     }
 
     public Money(int num) {
@@ -55,9 +59,17 @@ public class Money {
         return new Money(this.amount.multiply(rate.unbox()));
     }
 
-
     public BigDecimal unbox() {
-        return amount;
+        return unbox(10);
     }
 
+
+    public BigDecimal unbox(int scale) {
+        return amount.setScale(scale, RoundingMode.HALF_UP);
+    }
+
+    @Override
+    public String toString() {
+        return amount.toPlainString();
+    }
 }

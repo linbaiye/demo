@@ -16,7 +16,7 @@ public class PaymentRule implements Contract.Rule {
         }
         Money balance = ((RepaymentEvent) event).getAmount();
         List<AccountEntry> accountEntryList = new LinkedList<>();
-        Money principle = loan.getAccountBalance(Account.Type.PRINCIPLE);
+        Money principle = loan.sumOutstandingPrinciple(Account.Type.PRINCIPLE);
         if (principle.compareTo(balance) <= 0) {
             accountEntryList.add(new AccountEntry(Account.Type.PRINCIPLE, balance, event));
             balance = Money.ZERO;
@@ -24,7 +24,7 @@ public class PaymentRule implements Contract.Rule {
             accountEntryList.add(new AccountEntry(Account.Type.PRINCIPLE, principle, event));
             balance = balance.subtract(principle);
         }
-        Money interest = loan.getAccountBalance(Account.Type.INTEREST);
+        Money interest = loan.sumOutstandingPrinciple(Account.Type.INTEREST);
         if (balance.compareTo(interest) <= 0) {
 
         }

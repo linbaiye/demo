@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class PrincipleAccount extends Account {
 
-    private final Installment installment;
+    private final Loan.Installment installment;
 
     public PrincipleAccount(Money balance, List<AccountEntry> accountEntryList) {
         super(Type.PRINCIPLE, balance, accountEntryList);

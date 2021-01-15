@@ -1,9 +1,11 @@
 package com.example.demo.model;
 
+import com.example.demo.controller.request.LoanDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedList;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 /**
  * @author tao.lin
@@ -13,13 +15,17 @@ import java.util.LinkedList;
 @AllArgsConstructor
 public class LoanFactory {
 
-    public Loan create() {
+    public Loan create(LoanDTO loanDTO) {
         return Loan.builder()
-                .no("1234")
-                .loanAmount(new Money(1000))
-                .installmentTerm(3)
-                .annualRate(new AnnualRate("0.25"))
-                .events(new LinkedList<>())
+                .no(loanDTO.getNo())
+                .loanAmount(new Money(loanDTO.getLoanAmount()))
+                .installmentTerm(loanDTO.getInstallmentTerm())
+                .annualRate(new AnnualRate(loanDTO.getAnnualRate()))
+                .startedTime(LocalDateTime.ofEpochSecond(loanDTO.getStartedTime(),0, ZoneOffset.UTC))
+                .badDays(0)
+                .state("NORMAL")
+                .overdueDays(loanDTO.getOverdueDays())
+                .overdueDailyRate(new DailyRate(loanDTO.getOverdueDailyRate()))
                 .build();
     }
 }

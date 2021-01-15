@@ -12,6 +12,10 @@ public class DailyRate extends Rate {
         super(v);
     }
 
+    public DailyRate(String v) {
+        super(new BigDecimal(v));
+    }
+
     @Override
     public Rate toDaily() {
         return this;

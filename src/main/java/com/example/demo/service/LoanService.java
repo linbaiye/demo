@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.controller.request.LoanDTO;
 import com.example.demo.controller.request.PaymentDTO;
 import com.example.demo.model.*;
 import com.example.demo.repository.LoanRepository;
@@ -20,8 +21,8 @@ public class LoanService {
     private final LoanRepository loanRepository;
 
     @Transactional(rollbackFor = Exception.class)
-    public void accpetLoan() {
-        Loan loan = loanFactory.create();
+    public void acceptLoan(LoanDTO loanDTO) {
+        Loan loan = loanFactory.create(loanDTO);
         loan.generateInstallments();
         loanRepository.save(loan);
     }
