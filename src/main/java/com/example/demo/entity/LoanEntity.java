@@ -1,8 +1,9 @@
 package com.example.demo.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import com.example.demo.model.Loan;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -18,9 +19,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class LoanEntity {
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     private BigDecimal loanAmount;
@@ -33,7 +35,8 @@ public class LoanEntity {
 
     private BigDecimal overdueDailyRate;
 
-    private String state;
+    @Enumerated(EnumType.STRING)
+    private Loan.State state;
 
     private int overdueDays;
 
@@ -49,8 +52,10 @@ public class LoanEntity {
     @Version
     private Long version;
 
+    @CreationTimestamp
     private LocalDateTime createdTime;
 
+    @UpdateTimestamp
     private LocalDateTime updatedTime;
 
 }

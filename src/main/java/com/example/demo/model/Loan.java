@@ -1,12 +1,12 @@
 package com.example.demo.model;
 
+import com.example.demo.model.rate.Rate;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class Loan {
 
     private final Rate overdueDailyRate;
 
-    private String state;
+    private State state;
 
     private final int overdueDays;
 
@@ -48,11 +48,13 @@ public class Loan {
                 String no,
                 Rate annualRate,
                 Rate overdueDailyRate,
-                String state,
+                State state,
                 int overdueDays,
                 int badDays,
                 LocalDateTime startedTime,
-                List<Installment> installments, LocalDateTime lastDailyCalculatedTime) {
+                List<Installment> installments,
+                LocalDateTime lastDailyCalculatedTime) {
+        // invariant check.
         this.id = id;
         this.loanAmount = loanAmount;
         this.installmentTerm = installmentTerm;
@@ -68,7 +70,7 @@ public class Loan {
     }
 
     private boolean isClosed() {
-        return "CLOSED".equals(state) || "BAD".equals(state);
+        return State.PAID == state;
     }
 
     public void generateInstallments() {
@@ -84,57 +86,62 @@ public class Loan {
                 installments.add(installment);
                 sum = sum.add(avg);
             }
+            startDate = startDate.plusMonths(1).plusDays(1);
         }
     }
 
-    public List<Installment> listInstallments() {
-        return new ArrayList<>(installments);
-    }
 
-    private void handleEvent(Event e) {
-
-    }
-
-    private void changeStateIfSo(LocalDateTime now) {
+    public void tryChangeState() {
+        LocalDate date = LocalDate.now();
         for (Installment installment : installments) {
-            if (installment.isBad(now.toLocalDate(), badDays)) {
-                state = "BAD";
+            if (installment.isBad(date, badDays)) {
+                state = State.BAD;
                 return;
-            } else if (installment.isOverdue(now.toLocalDate(), overdueDays)) {
-                state = "OVERDUE";
-                return;
+            } else if (installment.isOverdue(date, overdueDays)) {
+                state = State.OVERDUE;
             }
         }
     }
 
+
     public void dailyRoll() {
         LocalDateTime now = LocalDateTime.now();
-        if (now.toLocalDate().isEqual(lastDailyCalculatedTime.toLocalDate())) {
-            throw new IllegalStateException("Daily roll done.");
-        }
-        changeStateIfSo(now);
-        if (isClosed()) {
-            return;
+        if (lastDailyCalculatedTime != null &&
+                !now.toLocalDate().isEqual(lastDailyCalculatedTime.toLocalDate().plusDays(1))) {
+            throw new IllegalStateException();
         }
         Money outstandingPrinciple = sumOutstandingPrinciple();
         Money interest = outstandingPrinciple.multiply(isOverdue() ? overdueDailyRate : annualRate.toDaily());
         for (Installment installment : installments) {
-            if (!installment.isPaid()) {
+            if (!installment.isClosed()) {
                 installment.addToOutstandingInterest(interest);
                 break;
             }
         }
+        lastDailyCalculatedTime = now;
     }
 
-    private boolean isOverdue() {
-        return "OVERDUE".equals(state) ||
-                "BAD".equals(state);
+    public boolean isOverdue() {
+        return state == State.OVERDUE ||
+                state == State.BAD;
     }
 
-    private Money sumOutstandingPrinciple() {
+    public boolean isBad() {
+        return state == State.BAD;
+    }
+
+    public Money sumOutstandingPrinciple() {
         Money sum = new Money(0);
         for (Installment installment : installments) {
-            sum.add(installment.getOutstandingPrinciple());
+            sum = sum.add(installment.getOutstandingPrinciple());
+        }
+        return sum;
+    }
+
+    public Money sumOutstandingInterest() {
+        Money sum = new Money(0);
+        for (Installment installment : installments) {
+            sum = sum.add(installment.getOutstandingInterest());
         }
         return sum;
     }
@@ -143,7 +150,6 @@ public class Loan {
         if (isClosed()) {
             throw new IllegalStateException("Loan closed.");
         }
-        handleEvent(new RepaymentEvent(new Money(amount), paidTime, LocalDateTime.now()));
     }
 
     public Money sumOutstandingPrinciple(Account.Type type) {
@@ -154,12 +160,22 @@ public class Loan {
         return sum;
     }
 
+
+    public enum State {
+        NORMAL,
+        OVERDUE,
+        BAD,
+        PAID,
+    }
+
     /**
      * @author tao.lin
      * @date 2021/1/13
      */
     @Getter
     public static class Installment {
+
+        private Long id;
 
         private Money outstandingPrinciple;
 
@@ -184,6 +200,20 @@ public class Loan {
             this.installmentNumber = installmentNumber;
         }
 
+        public Installment(Money outstandingPrinciple,
+                           Money outstandingInterest,
+                           LocalDate startDate,
+                           LocalDate endDate,
+                           int installmentNumber,
+                           long id) {
+            this.outstandingPrinciple = outstandingPrinciple;
+            this.outstandingInterest = outstandingInterest;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.installmentNumber = installmentNumber;
+            this.id = id;
+        }
+
         void repay(Money paidPrinciple, Money paidInterest) {
             // invariant check, 比如还款不能为负数，还清了不能再还，etc..
             this.outstandingPrinciple = this.outstandingPrinciple.subtract(paidPrinciple);
@@ -191,19 +221,30 @@ public class Loan {
         }
 
         void addToOutstandingInterest(Money interest) {
-            if (isPaid()) {
+            if (isClosed()) {
                 throw new IllegalStateException();
             }
             this.outstandingInterest = this.outstandingInterest.add(interest);
         }
 
-        boolean isPaid() {
+        void addToOutstandingInterest(LocalDate date, Money interest) {
+            if ((date.isAfter(startDate) || date.isEqual(startDate)) &&
+                    (endDate.isBefore(startDate) || endDate.isEqual(date))) {
+                addToOutstandingInterest(interest);
+            }
+        }
+
+        boolean isClosed() {
             return outstandingPrinciple.compareTo(Money.ZERO) == 0 &&
                     outstandingInterest.compareTo(Money.ZERO) == 0;
         }
 
+        boolean canAcceptPayment() {
+            return false;
+        }
+
         boolean isOverdue(LocalDate date, int days) {
-            return endDate.plusDays(days).isAfter(date) && !isPaid();
+            return date.isAfter(endDate.plusDays(days)) && !isClosed();
         }
 
         boolean isBad(LocalDate date, int days) {

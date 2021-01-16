@@ -10,4 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface LoanJpa extends JpaRepository<LoanEntity, Long> {
 
+    LoanEntity findByNo(String no);
+
 }

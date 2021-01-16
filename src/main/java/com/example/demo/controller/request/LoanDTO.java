@@ -1,5 +1,6 @@
 package com.example.demo.controller.request;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -7,6 +8,7 @@ import lombok.Data;
  * @date 2021/1/15
  */
 @Data
+@Builder
 public class LoanDTO {
 
     private Long id;

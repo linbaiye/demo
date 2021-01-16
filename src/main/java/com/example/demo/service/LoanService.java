@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.controller.request.LoanDTO;
 import com.example.demo.controller.request.PaymentDTO;
+import com.example.demo.factory.LoanFactory;
 import com.example.demo.model.*;
 import com.example.demo.repository.LoanRepository;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,14 @@ public class LoanService {
     public void acceptLoan(LoanDTO loanDTO) {
         Loan loan = loanFactory.create(loanDTO);
         loan.generateInstallments();
+        loanRepository.save(loan);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void rollDaily(String no) {
+        Loan loan = loanRepository.find(no);
+        loan.tryChangeState();
+        loan.dailyRoll();
         loanRepository.save(loan);
     }
 

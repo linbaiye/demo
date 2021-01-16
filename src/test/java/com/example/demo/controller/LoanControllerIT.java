@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.controller;
 
 import com.example.demo.TestSetup;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
  * @author tao.lin
  * @date 2021/1/15
  */
-public class ServiceIT extends TestSetup  {
+public class LoanControllerIT extends TestSetup  {
 
     @Builder
     @Data
@@ -59,8 +59,8 @@ public class ServiceIT extends TestSetup  {
                 .loanAmount("1000")
                 .annualRate("0.1")
                 .badDays(1)
-                .installmentTerm(1)
-                .no("1")
+                .installmentTerm(3)
+                .no("4")
                 .overdueDailyRate("0.0003")
                 .overdueDays(3)
                 .startedTime(new Date().getTime() / 1000)

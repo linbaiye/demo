@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.example.demo.model.rate.Rate;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -10,11 +12,12 @@ import java.math.RoundingMode;
 public class Money {
 
     private final BigDecimal amount;
+    private static final int SCALE = 8;
 
     public final static Money ZERO = new Money(0);
 
     public Money(BigDecimal amount) {
-        this.amount = amount.setScale(10, RoundingMode.HALF_UP);
+        this.amount = amount.setScale(SCALE, RoundingMode.HALF_UP);
     }
 
     public Money(String amount){
@@ -37,14 +40,14 @@ public class Money {
         if (nr <= 0) {
             throw new IllegalArgumentException("");
         }
-        return new Money(amount.divide(new BigDecimal(nr), 8, RoundingMode.HALF_UP));
+        return new Money(amount.divide(new BigDecimal(nr), SCALE, RoundingMode.HALF_UP));
     }
 
     public Money divide(BigDecimal divider) {
         if (divider.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("");
         }
-        return new Money(amount.divide(divider, 8, RoundingMode.HALF_UP));
+        return new Money(amount.divide(divider, SCALE, RoundingMode.HALF_UP));
     }
 
     public Money multiply(int nr) {
@@ -60,7 +63,7 @@ public class Money {
     }
 
     public BigDecimal unbox() {
-        return unbox(10);
+        return unbox(SCALE);
     }
 
 
@@ -71,5 +74,9 @@ public class Money {
     @Override
     public String toString() {
         return amount.toPlainString();
+    }
+
+    public static Money of(BigDecimal amount) {
+        return new Money(amount);
     }
 }

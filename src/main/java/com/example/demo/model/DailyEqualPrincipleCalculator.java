@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.example.demo.model.rate.Rate;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

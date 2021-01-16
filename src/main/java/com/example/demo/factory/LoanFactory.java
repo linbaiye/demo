@@ -1,6 +1,10 @@
-package com.example.demo.model;
+package com.example.demo.factory;
 
 import com.example.demo.controller.request.LoanDTO;
+import com.example.demo.model.Loan;
+import com.example.demo.model.Money;
+import com.example.demo.model.rate.AnnualRate;
+import com.example.demo.model.rate.DailyRate;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +27,7 @@ public class LoanFactory {
                 .annualRate(new AnnualRate(loanDTO.getAnnualRate()))
                 .startedTime(LocalDateTime.ofEpochSecond(loanDTO.getStartedTime(),0, ZoneOffset.UTC))
                 .badDays(0)
-                .state("NORMAL")
+                .state(Loan.State.NORMAL)
                 .overdueDays(loanDTO.getOverdueDays())
                 .overdueDailyRate(new DailyRate(loanDTO.getOverdueDailyRate()))
                 .build();
