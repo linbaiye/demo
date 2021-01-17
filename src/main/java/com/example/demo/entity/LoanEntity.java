@@ -1,59 +1,54 @@
 package com.example.demo.entity;
 
 import com.example.demo.model.Loan;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
-/**
- * @author tao.lin
- * @date 2021/1/15
- */
-@Entity(name = "loan")
-@Table(name = "loan")
+@Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
-@Data
+@Entity(name = "loan")
+@Table(name = "user_loan")
 public class LoanEntity {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private Long userId;
+
+    private String applicationNo;
+
+    private BigDecimal dailyInterestRate;
+
+    private BigDecimal overdueDailyInterestRate;
 
     private BigDecimal loanAmount;
 
-    private int installmentTerm;
+    private BigDecimal principle;
 
-    private String no;
+    private BigDecimal interest;
 
-    private BigDecimal annualRate;
+    private LocalDateTime startedDateTime;
 
-    private BigDecimal overdueDailyRate;
+    private Integer loanTerm;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(value = EnumType.STRING)
     private Loan.State state;
 
-    private int overdueDays;
-
-    private int badDays;
-
-    private LocalDateTime startedTime;
-
-    @OneToMany(mappedBy = "loan", cascade = CascadeType.PERSIST)
-    private List<InstallmentEntity> installmentEntities;
-
-    private LocalDateTime lastDailyCalculatedTime;
-
-    @Version
-    private Long version;
+    private LocalDateTime dailyInterestCalculatedTime;
 
     @CreationTimestamp
     private LocalDateTime createdTime;
+
+    @Version
+    private Integer version;
 
     @UpdateTimestamp
     private LocalDateTime updatedTime;

@@ -2,34 +2,27 @@ package com.example.demo.factory;
 
 import com.example.demo.controller.request.LoanDTO;
 import com.example.demo.model.Loan;
-import com.example.demo.model.Money;
-import com.example.demo.model.rate.AnnualRate;
-import com.example.demo.model.rate.DailyRate;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-/**
- * @author tao.lin
- * @date 2021/1/13
- */
 @Component
-@AllArgsConstructor
 public class LoanFactory {
 
-    public Loan create(LoanDTO loanDTO) {
+    public Loan create(LoanDTO dto) {
         return Loan.builder()
-                .no(loanDTO.getNo())
-                .loanAmount(new Money(loanDTO.getLoanAmount()))
-                .installmentTerm(loanDTO.getInstallmentTerm())
-                .annualRate(new AnnualRate(loanDTO.getAnnualRate()))
-                .startedTime(LocalDateTime.ofEpochSecond(loanDTO.getStartedTime(),0, ZoneOffset.UTC))
-                .badDays(0)
+                .interest(BigDecimal.ZERO)
                 .state(Loan.State.NORMAL)
-                .overdueDays(loanDTO.getOverdueDays())
-                .overdueDailyRate(new DailyRate(loanDTO.getOverdueDailyRate()))
+                .dailyInterestRate(new BigDecimal(dto.getInterestRate()))
+                .loanTerm(dto.getLoanTerm())
+                .principle(new BigDecimal(dto.getLoanAmount()))
+                .overdueDailyInterestRate(new BigDecimal(dto.getPenaltyRate()))
+                .applicationNo(dto.getApplicationNo())
+                .userId(dto.getUid())
+                .startedDateTime(LocalDateTime.ofEpochSecond(dto.getLoanStartedTime(), 0, ZoneOffset.UTC))
+                .loanAmount(new BigDecimal(dto.getLoanAmount()))
                 .build();
     }
 }

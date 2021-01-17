@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.controller.request.LoanDTO;
-import com.example.demo.controller.request.PaymentDTO;
+import com.example.demo.controller.request.RepaymentDTO;
 import com.example.demo.service.LoanService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class LoanController {
     @PostMapping(value = "/accept")
     public String accept(@Validated @RequestBody LoanDTO loanDTO) {
         try {
-            loanService.acceptLoan(loanDTO);
+//            loanService.acceptLoan(loanDTO);
             return "OK";
         } catch (Exception e) {
             log.error("exception", e);
@@ -34,8 +34,8 @@ public class LoanController {
 
 
     @PostMapping(value = "/repay")
-    public String repay(PaymentDTO paymentDTO) {
-        loanService.handleRepayment(paymentDTO);
+    public String repay(RepaymentDTO repaymentDTO) {
+//        loanService.handleRepayment(paymentDTO);
         return "OK";
     }
 

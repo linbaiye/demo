@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * @date 2021/1/14
  */
 @Data
-public class PaymentDTO {
+public class RepaymentDTO {
     private BigDecimal amount;
     private LocalDateTime paidTime;
     private String loanNo;

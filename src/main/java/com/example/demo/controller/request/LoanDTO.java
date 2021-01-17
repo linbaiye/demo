@@ -11,21 +11,17 @@ import lombok.Data;
 @Builder
 public class LoanDTO {
 
-    private Long id;
+    private Long uid;
 
     private String loanAmount;
 
-    private Integer installmentTerm;
+    private String applicationNo;
 
-    private String no;
+    private String interestRate;
 
-    private String annualRate;
+    private String penaltyRate;
 
-    private String overdueDailyRate;
+    private Integer loanTerm;
 
-    private Integer overdueDays;
-
-    private Integer badDays;
-
-    private Long startedTime;
+    private Long loanStartedTime;
 }
