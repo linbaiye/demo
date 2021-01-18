@@ -2,8 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.controller.request.LoanDTO;
 import com.example.demo.factory.LoanFactory;
-import com.example.demo.model.Loan;
-import com.example.demo.repository.LoanRepository;
+import com.example.demo.model.LoanRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,5 +21,4 @@ public class LoanService {
     public void accept(LoanDTO dto) {
         loanRepository.save(loanFactory.create(dto));
     }
-
 }

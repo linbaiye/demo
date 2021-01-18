@@ -2,6 +2,7 @@ package com.example.demo.factory;
 
 import com.example.demo.controller.request.LoanDTO;
 import com.example.demo.model.Loan;
+import com.example.demo.model.LoanValidator;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -11,8 +12,10 @@ import java.time.ZoneOffset;
 @Component
 public class LoanFactory {
 
+    private static final LoanValidator LOAN_VALIDATOR = new LoanValidator();
+
     public Loan create(LoanDTO dto) {
-        return Loan.builder()
+        Loan loan = Loan.builder()
                 .interest(BigDecimal.ZERO)
                 .state(Loan.State.NORMAL)
                 .dailyInterestRate(new BigDecimal(dto.getInterestRate()))
@@ -24,5 +27,7 @@ public class LoanFactory {
                 .startedDateTime(LocalDateTime.ofEpochSecond(dto.getLoanStartedTime(), 0, ZoneOffset.UTC))
                 .loanAmount(new BigDecimal(dto.getLoanAmount()))
                 .build();
+        LOAN_VALIDATOR.validate(loan);
+        return loan;
     }
 }

@@ -5,8 +5,10 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -40,6 +42,8 @@ public class Loan {
 
     private State state;
 
+    private final List<Repayment> repayments;
+
     public enum State {
         NORMAL,
         OVERDUE,
@@ -66,7 +70,8 @@ public class Loan {
     }
 
     public void calculateDailyInterest() {
-        interest = interest.add(principle.multiply(dailyInterestRate));
+        interest = interest.add(principle.multiply(dailyInterestRate)).setScale(2, RoundingMode.HALF_UP);
+        dailyInterestCalculatedTime = LocalDateTime.now();
     }
 
     public String getTipMessage() {

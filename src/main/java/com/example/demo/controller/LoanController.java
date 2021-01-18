@@ -1,14 +1,17 @@
 package com.example.demo.controller;
 
+import com.example.demo.controller.mapper.LoanResponseMapper;
 import com.example.demo.controller.request.LoanDTO;
-import com.example.demo.controller.request.RepaymentDTO;
+import com.example.demo.controller.response.QueryLoanRespDTO;
+import com.example.demo.model.LoanRepository;
 import com.example.demo.service.LoanService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cache.CacheException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author tao.lin
@@ -21,10 +24,14 @@ public class LoanController {
 
     private final LoanService loanService;
 
+    private final LoanResponseMapper loanResponseMapper;
+
+    private final LoanRepository loanRepository;
+
     @PostMapping(value = "/accept")
     public String accept(@Validated @RequestBody LoanDTO loanDTO) {
         try {
-//            loanService.acceptLoan(loanDTO);
+            loanService.accept(loanDTO);
             return "OK";
         } catch (Exception e) {
             log.error("exception", e);
@@ -33,10 +40,15 @@ public class LoanController {
     }
 
 
-    @PostMapping(value = "/repay")
-    public String repay(RepaymentDTO repaymentDTO) {
-//        loanService.handleRepayment(paymentDTO);
-        return "OK";
+    @PostMapping(value = "/query")
+    public @ResponseBody QueryLoanRespDTO query(@RequestParam(name = "applicationNo") String applicationNo) {
+        try {
+            return loanResponseMapper.map(loanRepository.findByNo(applicationNo)
+                    .orElseThrow(IllegalArgumentException::new));
+        } catch (Exception e) {
+            log.error("error: ", e);
+            return null;
+        }
     }
 
 }

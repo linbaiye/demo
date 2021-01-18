@@ -1,6 +1,8 @@
 package com.example.demo.entity;
 
 import com.example.demo.model.Loan;
+import com.example.demo.model.Repayment;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,12 +12,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor
 @Entity(name = "loan")
 @Table(name = "user_loan")
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoanEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,5 +56,8 @@ public class LoanEntity {
 
     @UpdateTimestamp
     private LocalDateTime updatedTime;
+
+    @OneToMany(mappedBy = "loan")
+    private List<Repayment> repayments;
 
 }
