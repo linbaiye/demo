@@ -1,30 +1,30 @@
 package com.example.demo.model;
 
-import com.example.demo.entity.LoanEntity;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class Repayment {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne@JoinColumn(name = "user_loan_id")
-    private LoanEntity loan;
+    private final String applicationNo;
 
-    private BigDecimal amount;
+    private final BigDecimal amount;
 
-    private LocalDateTime happenedTime;
+    private final LocalDateTime paidTime;
 
-    @CreationTimestamp
-    private LocalDateTime createdTime;
+    public Repayment(Long id,
+                     String applicationNo,
+                     BigDecimal amount,
+                     LocalDateTime paidTime) {
+        // invariant check.
+        this.id = id;
+        this.applicationNo = applicationNo;
+        this.amount = amount.setScale(4, RoundingMode.HALF_UP);
+        this.paidTime = paidTime;
+    }
 }

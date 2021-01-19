@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class LoanUT {
 
@@ -19,7 +20,13 @@ public class LoanUT {
     }
 
     @Test
-    public void testGetTipMessage() {
+    public void repay_should_repayInterestFirst() {
+        Repayment repayment = new Repayment(null, "1", new BigDecimal(10), LocalDateTime.now());
+        Loan loan = Loan.builder().principle(new BigDecimal(100))
+                .interest(new BigDecimal(9)).build();
+        Assert.assertNull(loan.repay(repayment));
+        Assert.assertEquals(0, BigDecimal.ZERO.compareTo(loan.getInterest()));
 
+        //more tests.
     }
 }

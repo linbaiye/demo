@@ -6,6 +6,7 @@ import com.example.demo.model.LoanValidator;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -20,14 +21,14 @@ public class LoanFactory {
                 .state(Loan.State.NORMAL)
                 .dailyInterestRate(new BigDecimal(dto.getInterestRate()))
                 .loanTerm(dto.getLoanTerm())
-                .principle(new BigDecimal(dto.getLoanAmount()))
+                .principle(new BigDecimal(dto.getLoanAmount()).setScale(4, RoundingMode.HALF_UP))
                 .overdueDailyInterestRate(new BigDecimal(dto.getPenaltyRate()))
                 .applicationNo(dto.getApplicationNo())
                 .userId(dto.getUid())
                 .startedDateTime(LocalDateTime.ofEpochSecond(dto.getLoanStartedTime(), 0, ZoneOffset.UTC))
                 .loanAmount(new BigDecimal(dto.getLoanAmount()))
                 .build();
-        LOAN_VALIDATOR.validate(loan);
+        LOAN_VALIDATOR.checkInvariant(loan);
         return loan;
     }
 }

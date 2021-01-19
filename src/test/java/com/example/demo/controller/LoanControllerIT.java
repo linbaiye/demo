@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -22,27 +25,26 @@ public class LoanControllerIT extends TestSetup {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private void postAccept(LoanDTO loanDTO) throws Exception {
-        mockMvc.perform(post("/accept")
+    private void postRecordLoan(LoanDTO loanDTO) throws Exception {
+        mockMvc.perform(post("/record-loan")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(loanDTO)))
                .andDo(print());
     }
 
-
     @Test
     public void testAcceptLoan() throws Throwable {
-//        LoanDTO dto = LoanDTO.builder()
-//                .uid(1L)
-//                .loanAmount("1000")
-//                .applicationNo("1")
-//                .interestRate("0.001")
-//                .loanTerm(30)
-//                .penaltyRate("0.002")
-//                .loanStartedTime(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
-//                .build();
-//        postAccept(dto);
-        Loan savedEntity = loanRepository.findByNo("1").orElseThrow(IllegalStateException::new);
+        LoanDTO dto = LoanDTO.builder()
+                .uid(1L)
+                .loanAmount("1000")
+                .applicationNo("1")
+                .interestRate("0.001")
+                .loanTerm(30)
+                .penaltyRate("0.002")
+                .loanStartedTime(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+                .build();
+        postRecordLoan(dto);
+        Loan savedEntity = loanRepository.findByApplicationNo("1").orElseThrow(IllegalStateException::new);
         Assert.assertEquals(30, savedEntity.getLoanTerm().intValue());
         // 更多的Assert.
     }

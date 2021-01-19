@@ -62,20 +62,24 @@ public class LoanRepositoryImpl implements LoanRepository {
                 .build();
     }
 
+    @Override
     public void save(Loan loan) {
         loanJpa.save(mapToEntity(loan));
     }
 
+    @Override
     public void update(Loan loan) {
         LoanEntity entity = loanJpa.findById(loan.getId()).orElseThrow(IllegalArgumentException::new);
         loanJpa.save(updateToEntity(loan, entity));
     }
 
+    @Override
     public List<Loan> findProgressingLoans(int size) {
         return loanJpa.findAll().stream().map(this::mapToLoan).collect(Collectors.toList());
     }
 
-    public Optional<Loan> findByNo(String no) {
+    @Override
+    public Optional<Loan> findByApplicationNo(String no) {
         return Optional.ofNullable(mapToLoan(loanJpa.findByApplicationNo(no)));
     }
 

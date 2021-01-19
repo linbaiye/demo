@@ -7,7 +7,7 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class DailyInterestCalculationTaskScheduler {
+public class DailyTaskScheduler {
 
     private final LoanRepository loanRepository;
 

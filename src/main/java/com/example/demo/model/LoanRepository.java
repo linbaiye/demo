@@ -1,7 +1,5 @@
 package com.example.demo.model;
 
-import com.example.demo.entity.LoanEntity;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -13,5 +11,5 @@ public interface LoanRepository {
 
     List<Loan> findProgressingLoans(int size);
 
-    Optional<Loan> findByNo(String no);
+    Optional<Loan> findByApplicationNo(String no);
 }

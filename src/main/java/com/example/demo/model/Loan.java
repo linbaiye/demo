@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -42,11 +41,10 @@ public class Loan {
 
     private State state;
 
-    private final List<Repayment> repayments;
-
     public enum State {
         NORMAL,
         OVERDUE,
+        PAID,
     }
 
     /**
@@ -76,9 +74,31 @@ public class Loan {
 
     public String getTipMessage() {
         if (isOverdue()) {
-            return "您已逾期，为了不影响您的征信，请立即结清";
         }
         return null;
+    }
+
+    public OverRepayment repay(Repayment repayment) {
+        BigDecimal paymentAmount = repayment.getAmount();
+        if (paymentAmount.compareTo(interest) >= 0) {
+            paymentAmount = paymentAmount.subtract(interest);
+            interest = BigDecimal.ZERO;
+        } else {
+            interest = interest.subtract(paymentAmount);
+            paymentAmount = BigDecimal.ZERO;
+        }
+        if (paymentAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            return null;
+        }
+        if (paymentAmount.compareTo(principle) >= 0) {
+            paymentAmount = paymentAmount.subtract(principle);
+            principle = BigDecimal.ZERO;
+        } else {
+            principle = principle.subtract(paymentAmount);
+            paymentAmount = BigDecimal.ZERO;
+        }
+        return paymentAmount.compareTo(BigDecimal.ZERO) > 0 ?
+                new OverRepayment(this.id, paymentAmount) : null;
     }
 
 }

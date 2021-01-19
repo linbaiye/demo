@@ -2,14 +2,15 @@ package com.example.demo.controller;
 
 import com.example.demo.controller.mapper.LoanResponseMapper;
 import com.example.demo.controller.request.LoanDTO;
+import com.example.demo.controller.request.RepaymentDTO;
 import com.example.demo.controller.response.QueryLoanRespDTO;
+import com.example.demo.factory.LoanFactory;
 import com.example.demo.model.LoanRepository;
+import com.example.demo.model.OverRepayment;
 import com.example.demo.service.LoanService;
+import com.example.demo.service.OverRepaymentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +29,14 @@ public class LoanController {
 
     private final LoanRepository loanRepository;
 
-    @PostMapping(value = "/accept")
-    public String accept(@Validated @RequestBody LoanDTO loanDTO) {
+    private final LoanFactory loanFactory;
+
+    private final OverRepaymentService overRepaymentService;
+
+    @PostMapping(value = "/record-loan")
+    public String recordLoan(@Validated @RequestBody LoanDTO loanDTO) {
         try {
-            loanService.accept(loanDTO);
+            loanRepository.save(loanFactory.create(loanDTO));
             return "OK";
         } catch (Exception e) {
             log.error("exception", e);
@@ -39,16 +44,19 @@ public class LoanController {
         }
     }
 
+    @PostMapping(value = "/view")
+    public QueryLoanRespDTO view(@RequestParam(name = "applicationNo") String applicationNo) {
+        return loanResponseMapper.map(
+                loanRepository.findByApplicationNo(applicationNo).orElseThrow(IllegalArgumentException::new));
+    }
 
-    @PostMapping(value = "/query")
-    public @ResponseBody QueryLoanRespDTO query(@RequestParam(name = "applicationNo") String applicationNo) {
-        try {
-            return loanResponseMapper.map(loanRepository.findByNo(applicationNo)
-                    .orElseThrow(IllegalArgumentException::new));
-        } catch (Exception e) {
-            log.error("error: ", e);
-            return null;
+    @PostMapping(value = "/repay")
+    public String repay(@RequestBody RepaymentDTO repaymentDTO) {
+        OverRepayment overRepayment = loanService.repay(repaymentDTO);
+        if (overRepayment != null) {
+            overRepaymentService.processOverpayment(overRepayment);
         }
+        return "OK";
     }
 
 }

@@ -1,14 +1,14 @@
 package com.example.demo.task;
 
 import com.example.demo.TestSetup;
-import com.example.demo.model.DailyInterestCalculationTaskScheduler;
+import com.example.demo.model.DailyTaskScheduler;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class TaskSchedulerIT extends TestSetup {
 
     @Autowired
-    private DailyInterestCalculationTaskScheduler taskScheduler;
+    private DailyTaskScheduler taskScheduler;
 
     @Test
     public void testDailySchedule() {
