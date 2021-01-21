@@ -3,7 +3,6 @@ package com.example.demo.repository;
 import com.example.demo.entity.RepaymentEntity;
 import com.example.demo.infra.RepaymentJpa;
 import com.example.demo.model.Repayment;
-import com.example.demo.model.RepaymentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 

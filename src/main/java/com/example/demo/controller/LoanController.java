@@ -5,7 +5,7 @@ import com.example.demo.controller.request.LoanDTO;
 import com.example.demo.controller.request.RepaymentDTO;
 import com.example.demo.controller.response.QueryLoanRespDTO;
 import com.example.demo.factory.LoanFactory;
-import com.example.demo.model.LoanRepository;
+import com.example.demo.repository.LoanRepository;
 import com.example.demo.model.OverRepayment;
 import com.example.demo.service.LoanService;
 import com.example.demo.service.OverRepaymentService;
@@ -47,7 +47,8 @@ public class LoanController {
     @PostMapping(value = "/view")
     public QueryLoanRespDTO view(@RequestParam(name = "applicationNo") String applicationNo) {
         return loanResponseMapper.map(
-                loanRepository.findByApplicationNo(applicationNo).orElseThrow(IllegalArgumentException::new));
+                loanRepository.findByApplicationNo(applicationNo).orElseThrow(IllegalArgumentException::new)
+        );
     }
 
     @PostMapping(value = "/repay")

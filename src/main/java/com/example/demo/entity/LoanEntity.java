@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import com.example.demo.model.Loan;
-import com.example.demo.model.Repayment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
@@ -56,8 +54,5 @@ public class LoanEntity {
 
     @UpdateTimestamp
     private LocalDateTime updatedTime;
-
-    @OneToMany(mappedBy = "loan")
-    private List<Repayment> repayments;
 
 }

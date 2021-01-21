@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.example.demo.repository.LoanRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,6 @@
-package com.example.demo.model;
+package com.example.demo.repository;
+
+import com.example.demo.model.Repayment;
 
 /**
  * @author tao.lin

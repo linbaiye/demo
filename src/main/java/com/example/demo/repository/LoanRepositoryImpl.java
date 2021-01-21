@@ -3,11 +3,9 @@ package com.example.demo.repository;
 import com.example.demo.entity.LoanEntity;
 import com.example.demo.infra.LoanJpa;
 import com.example.demo.model.Loan;
-import com.example.demo.model.LoanRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

@@ -3,6 +3,8 @@ package com.example.demo.service;
 import com.example.demo.controller.request.RepaymentDTO;
 import com.example.demo.factory.RepaymentFactory;
 import com.example.demo.model.*;
+import com.example.demo.repository.LoanRepository;
+import com.example.demo.repository.RepaymentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

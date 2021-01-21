@@ -27,5 +27,4 @@ public class RepaymentEntity {
 
     private LocalDateTime paidTime;
 
-
 }

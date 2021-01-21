@@ -2,7 +2,6 @@ package com.example.demo.factory;
 
 import com.example.demo.controller.request.LoanDTO;
 import com.example.demo.model.Loan;
-import com.example.demo.model.LoanValidator;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -30,5 +29,12 @@ public class LoanFactory {
                 .build();
         LOAN_VALIDATOR.checkInvariant(loan);
         return loan;
+    }
+
+    public static class LoanValidator {
+
+        public void checkInvariant(Loan loan) {
+            //Invariant check.
+        }
     }
 }
